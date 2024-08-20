@@ -1,0 +1,90 @@
+# Node modules
+node_modules/
+
+# TypeScript compiled output
+dist/
+build/
+out/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm/
+
+# Optional REPL history
+.node_repl_history
+
+# Logs
+logs/
+*.log
+yarn-debug.log*
+.yarn-error.log*
+npm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.DS_Store
+Thumbs.db
+
+# dotenv environment variables file
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# lockfiles (choose one if using npm, yarn, or pnpm)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional: Ignore compiled JavaScript files
+*.js
+*.jsx
+*.js.map
+*.jsx.map
+
+# Optional: Ignore compiled CSS/SCSS files
+*.css
+*.scss
+*.sass
+*.css.map
+*.scss.map
+*.sass.map
+
+# Optional: Ignore minified files
+*.min.js
+*.min.css
+
+# Optional: Ignore bundled files
+.bundle/
+*.bundle.js
+*.bundle.css
+
+# Optional: Ignore static files
+src/
+assets/
+static/
+
+# Optional: Ignore coverage results
+coverage/
+lcov-report/
+
+# Optional: Ignore temporary files
+*.tmp
+*.temp
+
+# Optional: Ignore miscellaneous IDE files
+*.swp
+*~.nib
+
+.idea
