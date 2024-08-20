@@ -1,4 +1,4 @@
-# Step 1: Use an official Node.js runtime as the base image
+# Stage 1: Build the React app
 FROM node:20-alpine AS build
 
 # Set environment variables for the build process
@@ -8,28 +8,41 @@ ARG REACT_APP_FRONTEND_BASE_URL
 # Step 2: Set the working directory in the container
 WORKDIR /app
 
-# Step 3: Copy the package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Step 4: Install the dependencies
+# Install dependencies for both React and Express
 RUN npm install
 
-# Step 5: Copy the rest of the app's source code to the working directory
+# Copy the rest of the application code
 COPY . .
 
-# Step 7: Build the React app
+# Build the React app
 RUN npm run build
 
+# Stage 2: Set up the Express server
 FROM node:20-alpine
 
-# Install `serve` globally
-RUN npm install -g serve
+ENV REACT_APP_BACKEND_BASE_URL=${REACT_APP_BACKEND_BASE_URL}
+ENV REACT_APP_FRONTEND_BASE_URL=${REACT_APP_FRONTEND_BASE_URL}
 
-# Step 9: Copy the built React app from the previous step to the NGINX web root
-COPY --from=build /app/build /app/build
+# Set working directory inside the container
+WORKDIR /app
 
-# Step 10: Expose port
+# Copy only the package.json and package-lock.json files to install production dependencies
+COPY package*.json ./
+
+# Install only the production dependencies
+RUN npm install --only=production
+
+# Copy the build from the first stage
+COPY --from=build /app/build ./build
+
+# Copy the server files
+COPY src/server.js .
+
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Serve the React app
-CMD ["serve", "-s", "/app/build"]
+# Command to start the server
+CMD ["node", "server.js"]
