@@ -2,7 +2,6 @@
 FROM node:20-alpine AS build
 
 # Set environment variables for the build process
-ARG REACT_APP_BACKEND_BASE_URL
 ARG REACT_APP_FRONTEND_BASE_URL
 
 # Step 2: Set the working directory in the container
@@ -22,9 +21,6 @@ RUN npm run build
 
 # Stage 2: Set up the Express server
 FROM node:20-alpine
-
-ENV REACT_APP_BACKEND_BASE_URL=${REACT_APP_BACKEND_BASE_URL}
-ENV REACT_APP_FRONTEND_BASE_URL=${REACT_APP_FRONTEND_BASE_URL}
 
 # Set working directory inside the container
 WORKDIR /app

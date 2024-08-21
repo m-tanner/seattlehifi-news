@@ -86,14 +86,14 @@ This application is Dockerized for easy deployment. The Docker setup includes an
 To build the Docker image to run locally:
 
 ```bash
-docker build --build-arg REACT_APP_BACKEND_BASE_URL=http://localhost:8080 --build-arg REACT_APP_FRONTEND_BASE_URL=http://localhost:3000 --platform linux/amd64 -t hawthorne-notifications-frontend:latest .
+docker build --build-arg REACT_APP_FRONTEND_BASE_URL=http://localhost:3000 --platform linux/amd64 -t hawthorne-notifications-frontend:latest .
 ```
 
 
 To build the Docker image to deploy to production:
 
 ```bash
-docker build --build-arg REACT_APP_BACKEND_BASE_URL=https://hawthorne-notifications-app-sdo7vkuv7q-uw.a.run.app --build-arg REACT_APP_FRONTEND_BASE_URL=https://hawthorne-notifications-frontend-sdo7vkuv7q-uw.a.run.app --platform linux/amd64 -t hawthorne-notifications-frontend:latest .
+docker build --build-arg REACT_APP_FRONTEND_BASE_URL=https://hawthorne-notifications-frontend-sdo7vkuv7q-uw.a.run.app --platform linux/amd64 -t hawthorne-notifications-frontend:latest .
 ```
 
 ### Run the Docker Container
@@ -101,7 +101,7 @@ docker build --build-arg REACT_APP_BACKEND_BASE_URL=https://hawthorne-notificati
 Run the Docker container:
 
 ```bash
-docker run -p 80:3000 -e REACT_APP_BACKEND_BASE_URL=http://localhost:8080 -e REACT_APP_FRONTEND_BASE_URL=http://localhost:3000 hawthorne-notifications-frontend
+docker run -p 80:3000 -e REACT_APP_BACKEND_BASE_URL=http://localhost:8080 hawthorne-notifications-frontend
 ```
 
 This command maps port 80 of the Docker container to port 80 on your local machine. You can access the app by navigating to `http://localhost` in your web browser.

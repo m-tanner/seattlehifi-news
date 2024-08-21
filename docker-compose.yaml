@@ -6,10 +6,8 @@ services:
       dockerfile: Dockerfile
       args:
         - REACT_APP_FRONTEND_BASE_URL=http://localhost:80
-        - REACT_APP_BACKEND_BASE_URL=http://backend:8080
     container_name: hawthorne-notifications-frontend
     environment:
-      - REACT_APP_FRONTEND_BASE_URL=http://localhost:80
       - REACT_APP_BACKEND_BASE_URL=http://backend:8080
     ports:
       - "3000:3000"
@@ -23,11 +21,10 @@ services:
     restart: unless-stopped
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/GOOGLE_APPLICATION_CREDENTIALS
-      GMAIL_PASSWORD: /run/secrets/GMAIL_PASSWORD
+      GMAIL_PASSWORD: ${GMAIL_PASSWORD}
       env: dev
     secrets:
       - GOOGLE_APPLICATION_CREDENTIALS
-      - GMAIL_PASSWORD
     ports:
       - "8080:8080"
     networks:
@@ -36,9 +33,6 @@ services:
 secrets:
   GOOGLE_APPLICATION_CREDENTIALS:
     file: $HOME/.gcloud/hawthorne-notifications-0a1c3d137ad2.json
-  GMAIL_PASSWORD:
-    file: $HOME/watchhawthornestereo.txt
-
 
 networks:
   net:
