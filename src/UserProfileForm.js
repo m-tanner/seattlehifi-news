@@ -84,7 +84,7 @@ const UserProfileForm = () => {
   if (loading) {
     return (
         <div className={"user-profile-form-container"}>
-          <p>Loading...</p>;
+          <p>Loading...</p>
         </div>
     );
   }
@@ -92,7 +92,7 @@ const UserProfileForm = () => {
   if (submitted) {
     return (
         <div className={"user-profile-form-container"}>
-          <p>Form submitted successfully!</p>;
+          <p>Form submitted successfully!</p>
         </div>
     );
   }
