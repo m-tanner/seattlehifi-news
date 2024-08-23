@@ -67,7 +67,6 @@ body, html {
     margin-left: auto; /* Aligns the checkbox to the right of the label */
 }
 
-/* Typography */
 h2 {
     margin-top: 0;
     text-align: center;
@@ -80,9 +79,14 @@ p {
     color: #333;
 }
 
-/* Form styling */
-.form-group {
-    margin-bottom: 16px;
+a {
+    color: #01733F;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #002244;
+    text-decoration: underline;
 }
 
 label {
@@ -115,29 +119,58 @@ input[type="checkbox"] {
     background-color: #f4f4f4;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #01733F;
-    border: none;
-    color: white;
+button, .coffee-button, .github-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
     font-size: 16px;
-    cursor: pointer;
+    border: none;
     border-radius: 4px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 16px;
+    height: 44px;
+    line-height: 1.5;
+}
+
+button {
+    background-color: #01733F;
+    color: white;
 }
 
 button:hover {
     background-color: #002244;
+    transform: scale(1.05);
 }
 
-/* Link styling */
-a {
-    color: #01733F;
-    text-decoration: none;
+.coffee-button {
+    background-color: #FFDD00;
+    color: #000000;
 }
 
-a:hover {
-    color: #002244;
-    text-decoration: underline;
+.coffee-button:hover {
+    background-color: #FFD700;
+    transform: scale(1.05);
+}
+
+.github-button {
+    background-color: #24292e;
+    color: white;
+}
+
+.github-button:hover {
+    background-color: #444d56;
+    transform: scale(1.05);
+}
+
+.coffee-button img,
+.github-button img {
+    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle; /* Align image vertically in the center */
 }
