@@ -1,224 +1,245 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 
 const UserProfileForm = () => {
-  const { id } = useParams();
-  const [formData, setFormData] = useState({
-    preferred_name: '',
-    email_address: '',
-    favorite_keywords: [],
-    favorites_only: false,
-    unsubscribe: false,
-  });
+    const {id} = useParams();
+    const [formData, setFormData] = useState({
+        preferred_name: '',
+        email_address: '',
+        favorite_keywords: [],
+        favorites_only: false,
+        unsubscribed: false,
+    });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [triggerResponse, setTriggerResponse] = useState(null); // State to hold trigger response
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [actionResponse, setActionResponse] = useState(null);
 
-  useEffect(() => {
-    // Fetch user data from the API when the component mounts
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/user/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        setFormData({
-          preferred_name: data.preferred_name || '',
-          email_address: data.email_address || '',
-          favorite_keywords: data.favorite_keywords || [],
-          favorites_only: data.favorites_only || false,
+    useEffect(() => {
+        const fetchUserData = async () => {
+            setLoading(true);
+            const response = await fetch(`/api/user/${id}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            const data = await response.json();
+            setFormData(data);
+            setLoading(false);
+        };
+
+        fetchUserData().catch((error) => {
+            setError(error.message);
+            setLoading(false);
         });
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
+    }, [id]);
+
+    const handleChange = (e) => {
+        const {name, value, type, checked} = e.target;
+        if (type === 'checkbox') {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: checked,
+            }));
+        } else if (name === 'favorite_keywords') {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value.split(',')
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
     };
 
-    fetchData();
-  }, [id]);
+    const submitUserData = async (id, formData) => {
+        const response = await fetch(`/api/user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                secret: id,
+                user: {
+                    ...formData,
+                    favorite_keywords: formData.favorite_keywords.map((keyword) => keyword.trim())
+                }
+            }),
+        });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: checked,
-      }));
-    } else if (name === 'favorite_keywords') {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value.split(',').map((item) => item.trim()),
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
+        if (!response.ok) {
+            throw new Error('Failed to submit data');
+        }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`/api/user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ secret: id, user: formData }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to submit data');
-      }
-      const data = await response.json();
-      console.log('Form Data Submitted:', data);
-      setSubmitted(true);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+        return response.json();
+    };
 
-  const triggerNotifications = async () => {
-    try {
-      const response = await fetch(`/api/trigger`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to trigger notifications');
-      }
-      setTriggerResponse({ success: true, message: result.message });
-    } catch (err) {
-      setTriggerResponse({ success: false, message: err.message });
-    }
-  };
+    const handleFormSubmission = async () => {
+        try {
+            const data = await submitUserData(id, formData);
+            console.log('Form Data Submitted:', data);
+            setActionResponse({success: true, message: 'User profile updated successfully!'});
+        } catch (error) {
+            setError(error.message);
+            setActionResponse({success: false, message: error.message});
+        }
+    };
 
-  if (loading) {
-    return (
-        <div className={"user-profile-form-container"}>
-          <p>Loading...</p>
-        </div>
-    );
-  }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        handleFormSubmission().catch((error) => {
+            setError(error.message);
+        });
+    };
 
-  if (submitted) {
-    return (
-        <div className={"user-profile-form-container"}>
-          <p>Form submitted successfully!</p>
-        </div>
-    );
-  }
 
-  if (error === "Failed to fetch data") {
-    return (
-        <div className={"user-profile-form-container"}>
-          <p>This login token is expired or doesn't exist</p>
-        </div>
-    );
-  }
+    const triggerNotificationsApi = async () => {
+        const response = await fetch(`/api/trigger`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-  if (error) {
-    return (
-        <div className={"user-profile-form-container"}>
-          <p>Error: {error}</p>
-        </div>
-    );
-  }
+        const result = await response.json();
 
-  return (
-      <div className={"user-profile-form-container"}>
-        <h2>Edit your profile</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="preferred_name">Preferred Name:</label>
-            <input
-                type="text"
-                id="preferred_name"
-                name="preferred_name"
-                value={formData.preferred_name}
-                onChange={handleChange}
-                required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email_address">Email Address:</label>
-            <input
-                type="email"
-                id="email_address"
-                name="email_address"
-                value={formData.email_address}
-                onChange={handleChange}
-                required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="favorite_keywords">Favorite Keywords (comma-separated):</label>
-            <input
-                type="text"
-                id="favorite_keywords"
-                name="favorite_keywords"
-                value={formData.favorite_keywords.join(', ')}
-                onChange={handleChange}
-            />
-          </div>
-          <div className="form-group checkbox-group">
-            <label htmlFor="favorites_only">Favorites Only:</label>
-            <input
-                type="checkbox"
-                id="favorites_only"
-                name="favorites_only"
-                checked={formData.favorites_only}
-                onChange={handleChange}
-            />
-          </div>
-          <div className="form-group checkbox-group">
-            <label htmlFor="unsubscribe">Unsubscribe?</label>
-            <input
-                type="checkbox"
-                id="unsubscribe"
-                name="unsubscribe"
-                checked={formData.unsubscribe}
-                onChange={handleChange}
-            />
-          </div>
-          <button type="submit">Save</button>
-          <a href="https://www.buymeacoffee.com/m.tanner" target="_blank" rel="noopener noreferrer"
-             className="coffee-button">
-            <img src="https://cdn-icons-png.flaticon.com/512/1046/1046754.png" alt="Coffee Icon"/>
-            Buy Me a Coffee
-          </a>
-          <a href="https://github.com/m-tanner/hawthornestereo-news/issues" target="_blank" rel="noopener noreferrer"
-             className="github-button">
-            <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub Icon"/>
-            Submit Issues & Feature Requests
-          </a>
-          {error && <p>Error: {error}</p>}
-        </form>
-        {/* Conditionally render the "Trigger Notifications" button */}
-        {(formData.email_address.endsWith('@hawthornestereo.com') || formData.email_address.endsWith('@tanner-wei.com')) && (
-            <div>
-              <button onClick={triggerNotifications}>Trigger Notifications</button>
-              {/* Show trigger response */}
-              {triggerResponse && (
-                  <p>
-                    {triggerResponse.success ? (
-                        <span>Success: {triggerResponse.message}</span>
-                    ) : (
-                        <span>Error: {triggerResponse.message}</span>
-                    )}
-                  </p>
-              )}
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to trigger notifications');
+        }
+
+        return result;
+    };
+
+    const handleTriggerNotifications = async () => {
+        try {
+            const result = await triggerNotificationsApi();
+            setActionResponse({success: true, message: result.message});
+        } catch (error) {
+            setActionResponse({success: false, message: error.message});
+        }
+    };
+
+    const triggerNotifications = () => {
+        handleTriggerNotifications().catch((error) => {
+            setActionResponse({success: false, message: error.message});
+        });
+    };
+
+    if (loading) {
+        return (
+            <div className={"user-profile-form-container"}>
+                <p>Loading...</p>
             </div>
-        )}
-      </div>
-  );
+        );
+    }
+
+    if (error === "Failed to fetch data") {
+        return (
+            <div className={"user-profile-form-container"}>
+                <p>This login token is expired or doesn't exist</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className={"user-profile-form-container"}>
+                <p>Unexpected Error: {error}</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className={"user-profile-form-container"}>
+            <h2>Edit your profile</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="preferred_name">Preferred Name:</label>
+                    <input
+                        type="text"
+                        id="preferred_name"
+                        name="preferred_name"
+                        value={formData.preferred_name}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="email_address">Email Address:</label>
+                    <input
+                        type="email"
+                        id="email_address"
+                        name="email_address"
+                        value={formData.email_address}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="favorite_keywords">Favorite Keywords (comma-separated, no phrases):</label>
+                    <input
+                        type="text"
+                        id="favorite_keywords"
+                        name="favorite_keywords"
+                        value={Array.isArray(formData.favorite_keywords) ? formData.favorite_keywords.join(',') : ''}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group checkbox-group">
+                    <label htmlFor="favorites_only">Favorites Only:</label>
+                    <input
+                        type="checkbox"
+                        id="favorites_only"
+                        name="favorites_only"
+                        checked={formData.favorites_only}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group checkbox-group">
+                    <label htmlFor="unsubscribe">Unsubscribe?</label>
+                    <input
+                        type="checkbox"
+                        id="unsubscribe"
+                        name="unsubscribe"
+                        checked={formData.unsubscribed}
+                        onChange={handleChange}
+                    />
+                </div>
+                <button type="submit">Save</button>
+                <a href="https://www.buymeacoffee.com/m.tanner" target="_blank" rel="noopener noreferrer"
+                   className="coffee-button">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1046/1046754.png" alt="Coffee Icon"/>
+                    Buy Me a Coffee
+                </a>
+                <a href="https://github.com/m-tanner/hawthornestereo-news/issues" target="_blank"
+                   rel="noopener noreferrer"
+                   className="github-button">
+                    <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub Icon"/>
+                    Submit Issues & Feature Requests
+                </a>
+            </form>
+            {/* Conditionally render the "Trigger Notifications" button */}
+            {(typeof formData.email_address === 'string' &&
+                    (formData.email_address.endsWith('@hawthornestereo.com') ||
+                        formData.email_address.endsWith('@tanner-wei.com')))
+                && (
+                <div>
+                    <button onClick={triggerNotifications}>Trigger Notifications</button>
+                </div>
+            )}
+            {actionResponse && (
+                <p>
+                    {actionResponse.success ? (
+                        <span>Success: {actionResponse.message}</span>
+                    ) : (
+                        <span>Error: {actionResponse.message}</span>
+                    )}
+                </p>
+            )}
+            {error && <p>Error: {error}</p>}
+        </div>
+    );
 };
 
 export default UserProfileForm;

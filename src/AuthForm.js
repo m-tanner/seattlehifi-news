@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 
 const frontEndURL = process.env.REACT_APP_FRONTEND_BASE_URL;
 
@@ -7,27 +7,28 @@ const AuthForm = () => {
     const [message, setMessage] = useState('');
     const [submitted, setSubmitted] = useState(false);
 
+    const submitLoginForm = async (email_address, url) => {
+        setMessage('')
+        const response = await fetch(`/api/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email_address: email_address, url: url }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to submit form');
+        }
+        setSubmitted(true)
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage(''); // Reset message state
-
-        try {
-            const response = await fetch(`/api/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email_address: email, url: `${frontEndURL}/user-profile/` }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to submit form');
-            }
-            setSubmitted(true);
-        } catch (error) {
+        await submitLoginForm(email, `${frontEndURL}/user-profile/`).catch((error) => {
             setMessage(`Error: ${error.message}`);
             console.error('Error:', error);
-        }
+        });
     };
 
     // Render the "check your email" message if the form has been submitted
