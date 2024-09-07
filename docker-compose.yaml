@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: hawthorne-notifications-frontend
+    container_name: seattle-hifi-notifications-frontend
     environment:
       - REACT_APP_BACKEND_BASE_URL=http://backend:8080
       - REACT_APP_FRONTEND_BASE_URL=http://localhost:3000
@@ -24,7 +24,7 @@ services:
       - net
 
   backend:
-    image: hawthorne-notifications-app:latest
+    image: seattle-hifi-notifications-app:latest
     restart: unless-stopped
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/GOOGLE_APPLICATION_CREDENTIALS
@@ -47,7 +47,7 @@ services:
 
 secrets:
   GOOGLE_APPLICATION_CREDENTIALS:
-    file: $HOME/.gcloud/hawthorne-notifications-0a1c3d137ad2.json
+    file: $HOME/.gcloud/seattle-hifi-notifications-0a1c3d137ad2.json
 
 networks:
   net:
