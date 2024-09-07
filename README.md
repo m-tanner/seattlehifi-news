@@ -1,4 +1,4 @@
-# hawthornestereo.news
+# seattlehifi.news
 
 ## Features
 
@@ -25,8 +25,8 @@
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/m-tanner/hawthornestereo-news.git
-cd hawthornestereo-news
+git clone https://github.com/m-tanner/seattlehifi-news.git
+cd seattlehifi-news
 ```
 
 ### Install Dependencies

@@ -64,7 +64,7 @@ const AuthForm = () => {
                     <img src="/coffee.png" alt="Coffee Icon"/>
                     Buy Me a Coffee
                 </a>
-                <a href="https://github.com/m-tanner/hawthornestereo-news/issues" target="_blank"
+                <a href="https://github.com/m-tanner/seattlehifi-news/issues" target="_blank"
                    rel="noopener noreferrer" className="github-button">
                     <img src="/octocat.png" alt="GitHub Icon"/>
                     Report a Bug

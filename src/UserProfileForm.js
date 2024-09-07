@@ -153,7 +153,7 @@ const UserProfileForm = () => {
                     Log in again to make more changes.
                 </p>
                 <p>
-                    <a href="https://hawthornestereo.news">Return to Login</a>
+                    <a href="https://seattlehifi.news">Return to Login</a>
                 </p>
             </div>
         );
@@ -164,7 +164,7 @@ const UserProfileForm = () => {
             <div className={"user-profile-form-container"}>
                 <p>This login token is used or expired. Please log in again.</p>
                 <p>
-                    <a href="https://hawthornestereo.news">Return to Login</a>
+                    <a href="https://seattlehifi.news">Return to Login</a>
                 </p>
             </div>
         );
@@ -241,7 +241,7 @@ const UserProfileForm = () => {
                     <img src="/coffee.png" alt="Coffee Icon"/>
                     Buy Me a Coffee
                 </a>
-                <a href="https://github.com/m-tanner/hawthornestereo-news/issues" target="_blank"
+                <a href="https://github.com/m-tanner/seattlehifi-news/issues" target="_blank"
                    rel="noopener noreferrer"
                    className="github-button">
                     <img src="/octocat.png" alt="GitHub Icon"/>
@@ -250,7 +250,7 @@ const UserProfileForm = () => {
             </form>
             {/* Conditionally render the "Trigger Notifications" button */}
             {(typeof formData.email_address === 'string' &&
-                    (formData.email_address.endsWith('@hawthornestereo.com') ||
+                    (formData.email_address.endsWith('@seattlehifi.com') ||
                         formData.email_address.endsWith('@tanner-wei.com')))
                 && (
                     <button className="trigger-button" onClick={triggerNotifications}>
